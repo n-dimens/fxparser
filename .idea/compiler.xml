@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="fxparser" target="1.5" />
+      <module name="fxparser" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
