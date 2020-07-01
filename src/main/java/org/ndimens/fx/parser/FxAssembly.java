@@ -8,6 +8,7 @@ public class FxAssembly {
     private DOSStub dosStub;
     private PESignature peSignature;
     private COFFHeader coffHeader;
+    private PEHeader peHeader;
 
     protected FxAssembly() {
     }
@@ -37,6 +38,8 @@ public class FxAssembly {
         buffer = new byte[20];
         stream.read(buffer);
         result.coffHeader = new COFFHeader(buffer.clone());
+
+        result.peHeader = PEHeader.read(stream, result.coffHeader.getMachineType() == Machine._AMD64);
         return result;
     }
 
@@ -51,5 +54,7 @@ public class FxAssembly {
         if (!this.coffHeader.isCorrect()) {
             System.out.println("[ERROR] COFF Header is not correct");
         }
+
+        this.peHeader.print();
     }
 }

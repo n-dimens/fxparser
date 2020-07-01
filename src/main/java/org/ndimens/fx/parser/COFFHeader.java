@@ -22,13 +22,13 @@ public class COFFHeader {
 
     public COFFHeader(byte[] buffer) {
         this.buffer = buffer;
-        this.machineType = Machine.getValue(getShortValue(0));
-        this.numberOfSections = getShortValue(2);
-        this.timeDateStamp = getIntValue(4); // TODO: Преобразовать в дату-время
-        this.pointerToSymbolTable = getIntValue(8);
-        this.numberOfSymbols = getIntValue(12);
-        this.sizeOfOptionalHeader = getShortValue(16);
-        this.characteristics = getShortValue(18);
+        this.machineType = Machine.getValue(ReadValue.getShort(buffer, 0));
+        this.numberOfSections = ReadValue.getShort(buffer, 2);
+        this.timeDateStamp = ReadValue.getInt(buffer, 4); // TODO: Преобразовать в дату-время
+        this.pointerToSymbolTable = ReadValue.getInt(buffer, 8);
+        this.numberOfSymbols = ReadValue.getInt(buffer, 12);
+        this.sizeOfOptionalHeader = ReadValue.getShort(buffer, 16);
+        this.characteristics = ReadValue.getShort(buffer, 18);
     }
 
     public Machine getMachineType() {
@@ -50,17 +50,5 @@ public class COFFHeader {
 
     public boolean isCorrect() {
         return this.pointerToSymbolTable == 0 && this.numberOfSymbols == 0;
-    }
-
-    private short getShortValue(int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(this.buffer, offset, 2);
-        wrapped.order(ByteOrder.LITTLE_ENDIAN);
-        return wrapped.getShort();
-    }
-
-    private int getIntValue(int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(this.buffer, offset, 4);
-        wrapped.order(ByteOrder.LITTLE_ENDIAN);
-        return wrapped.getShort();
     }
 }
