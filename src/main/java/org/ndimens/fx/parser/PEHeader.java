@@ -2,6 +2,8 @@ package org.ndimens.fx.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PEHeader {
     private final String title = "PE Header";
@@ -35,8 +37,14 @@ public class PEHeader {
     private long sizeOfHeapCommit;
     private int loaderFlags;
     private int numberOfRvaAndSizes;
+    private List<ImageDataDirectory> dataDirectoryTable;
 
-    public static PEHeader read(InputStream stream, boolean is64bit) throws IOException {
+    public PEHeader() {
+        this.dataDirectoryTable = new ArrayList<>();
+    }
+
+    public static PEHeader read(InputStream stream, COFFHeader coffHeader) throws IOException {
+        var is64bit = coffHeader.getMachineType() == Machine._AMD64;
         var result = new PEHeader();
         result.magic = ReadValue.getShort(stream.readNBytes(2));
         result.majorLinkerVersion = stream.readNBytes(1)[0];
@@ -84,6 +92,15 @@ public class PEHeader {
 
         result.loaderFlags = ReadValue.getInt(stream.readNBytes(4));
         result.numberOfRvaAndSizes = ReadValue.getInt(stream.readNBytes(4));
+
+        // Data Directories
+        for (int i = 0; i < result.numberOfRvaAndSizes; i++) {
+            var dataDirectory = new ImageDataDirectory();
+            dataDirectory.setVirtualAddress(ReadValue.getInt(stream.readNBytes(4)));
+            dataDirectory.setSize(ReadValue.getInt(stream.readNBytes(4)));
+            result.dataDirectoryTable.add(dataDirectory);
+        }
+
         return result;
     }
 

@@ -35,6 +35,10 @@ public class COFFHeader {
         return this.machineType;
     }
 
+    public short getNumberOfSections() {
+        return numberOfSections;
+    }
+
     public void print() {
         System.out.println(this.title);
         System.out.println("----------------");
